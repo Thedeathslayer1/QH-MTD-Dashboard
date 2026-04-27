@@ -326,22 +326,20 @@ function updatePositionMetrics() {
     });
 
     let rCount = filteredPositions.length;
-    let aCount = 0; // EP NO exists
-    let oCount = 0; // CAN ID exists, EP NO doesn't
+    let aCount = 0; // EMP NO exists
+    let oCount = 0; // CANDIDATEID exists, but EMP NO blank
     let gCount = 0; // Both blank
 
     const hireableRows = [];
 
     filteredPositions.forEach(p => {
-        const canId = p['CAN ID'] || p['CANID'] || "";
-        const epNo = p['EP NO'] || p['EPNO'] || "";
+        // According to user screenshot keys are: CANDIDATEID (R) and EMP NO (S)
+        const canId = (p['CANDIDATEID'] || p['CANID'] || p['CAN ID'] || "").toString().trim();
+        const epNo = (p['EMP NO'] || p['EP NO'] || p['EPNO'] || "").toString().trim();
 
-        const isCanBlank = canId.toString().trim() === "";
-        const isEpBlank = epNo.toString().trim() === "";
-
-        if (!isEpBlank) {
+        if (epNo !== "") {
             aCount++;
-        } else if (!isCanBlank) {
+        } else if (canId !== "") {
             oCount++;
         } else {
             gCount++;
