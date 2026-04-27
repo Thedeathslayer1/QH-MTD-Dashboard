@@ -98,6 +98,7 @@ function initializeDashboard() {
 
     // 2. Setup Position Dashboard
     populatePositionFilters();
+    // Default: Reset Position Dashboard view (avoiding initial lag)
     updatePositionMetrics();
 }
 
@@ -302,6 +303,21 @@ function updatePositionMetrics() {
     const bId = posBuildId.value.trim();
     const wArea = posWorkArea.value.trim();
     const jRole = posJobRole.value.trim();
+
+    // Check if any filter is actually used
+    const isFiltered = (bId !== "" && bId !== "All") || 
+                       (wArea !== "" && wArea !== "All") || 
+                       (jRole !== "" && jRole !== "All");
+
+    if (!isFiltered) {
+        document.getElementById('raog-r').innerText = "0";
+        document.getElementById('raog-a').innerText = "0";
+        document.getElementById('raog-o').innerText = "0";
+        document.getElementById('raog-g').innerText = "0";
+        renderHireableTable([]);
+        currentHireableRows = [];
+        return;
+    }
 
     filteredPositions = globalPositions.filter(p => {
         return (!bId || bId === 'All' || p['BUILDID']?.toString() === bId) &&
