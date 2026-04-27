@@ -286,23 +286,43 @@ const posWorkArea = document.getElementById('pos-work-area');
 const posJobRole = document.getElementById('pos-job-role');
 
 function populatePositionFilters() {
-    const buildIds = [...new Set(globalPositions.map(p => p['BUILDID']).filter(Boolean))].sort();
-    const workAreas = [...new Set(globalPositions.map(p => p['WORKAREA']).filter(Boolean))].sort();
-    const jobRoles = [...new Set(globalPositions.map(p => p['ROLE']).filter(Boolean))].sort();
+    updateDatalists();
+    posBuildId.oninput = updatePositionMetrics;
+    posWorkArea.oninput = updatePositionMetrics;
+    posJobRole.oninput = updatePositionMetrics;
+}
+
+function updateDatalists() {
+    const bId = posBuildId.value.trim();
+    const wArea = posWorkArea.value.trim();
+    const jRole = posJobRole.value.trim();
+
+    const buildIds = [...new Set(globalPositions.filter(p => 
+        (!wArea || wArea === 'All' || p['WORKAREA']?.toString() === wArea) &&
+        (!jRole || jRole === 'All' || p['ROLE']?.toString() === jRole)
+    ).map(p => p['BUILDID']).filter(Boolean))].sort();
+    
+    const workAreas = [...new Set(globalPositions.filter(p => 
+        (!bId || bId === 'All' || p['BUILDID']?.toString() === bId) &&
+        (!jRole || jRole === 'All' || p['ROLE']?.toString() === jRole)
+    ).map(p => p['WORKAREA']).filter(Boolean))].sort();
+
+    const jobRoles = [...new Set(globalPositions.filter(p => 
+        (!bId || bId === 'All' || p['BUILDID']?.toString() === bId) &&
+        (!wArea || wArea === 'All' || p['WORKAREA']?.toString() === wArea)
+    ).map(p => p['ROLE']).filter(Boolean))].sort();
 
     document.getElementById('build-list').innerHTML = buildIds.map(b => `<option value="${b}">`).join('');
     document.getElementById('work-list').innerHTML = workAreas.map(w => `<option value="${w}">`).join('');
     document.getElementById('job-list').innerHTML = jobRoles.map(j => `<option value="${j}">`).join('');
-
-    posBuildId.oninput = updatePositionMetrics;
-    posWorkArea.oninput = updatePositionMetrics;
-    posJobRole.oninput = updatePositionMetrics;
 }
 
 function updatePositionMetrics() {
     const bId = posBuildId.value.trim();
     const wArea = posWorkArea.value.trim();
     const jRole = posJobRole.value.trim();
+
+    updateDatalists();
 
     // Check if any filter is actually used
     const isFiltered = (bId !== "" && bId !== "All") || 
