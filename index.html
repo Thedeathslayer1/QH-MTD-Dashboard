@@ -6,30 +6,50 @@
     <title>QuickHire Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
         <header class="dashboard-header">
             <div>
-                <h1 class="main-title text-gradient">QuickHire Operation Dashboard</h1>
-                <p class="subtitle">Recruitment dashboard tracking onboarding, hiring approvals, and candidate pipeline.</p>
+                <h1 class="main-title text-gradient">QuickHire + Betterplace Dashboard</h1>
+                <p class="subtitle">Unified recruitment tracking and position management.</p>
             </div>
+            
+            <nav id="top-nav" class="top-nav" style="display: none;">
+                <button class="nav-btn active" data-view="original-dashboard">Operations Dashboard</button>
+                <button class="nav-btn" data-view="position-dashboard">Position RAOG & Hireable</button>
+            </nav>
+
             <div class="filters" id="filters-container" style="display: none;">
-                <select id="agency-filter" class="select-input"><option value="All">All</option></select>
-                <select id="state-filter" class="select-input"><option value="All">All</option></select>
+                <select id="agency-filter" class="select-input"><option value="All">All Agencies</option></select>
+                <select id="state-filter" class="select-input"><option value="All">All States</option></select>
             </div>
         </header>
 
         <div id="upload-section" class="upload-container">
-            <label class="upload-label">
-                <i class="ri-upload-cloud-2-line upload-icon"></i>
-                <span id="upload-text" class="upload-text">Upload Candidate Report (CSV)</span>
-                <input type="file" id="csv-upload" accept=".csv" class="hidden-input">
-            </label>
+            <div class="upload-grid">
+                <div class="upload-card">
+                    <label class="upload-label">
+                        <i class="ri-file-chart-line upload-icon"></i>
+                        <span id="csv-status" class="upload-text">Upload Candidate CSV</span>
+                        <input type="file" id="csv-upload" accept=".csv" class="hidden-input">
+                    </label>
+                </div>
+                <div class="upload-card">
+                    <label class="upload-label">
+                        <i class="ri-file-excel-2-line upload-icon"></i>
+                        <span id="xlsx-status" class="upload-text">Upload Position Excel</span>
+                        <input type="file" id="xlsx-upload" accept=".xlsx, .xls" class="hidden-input">
+                    </label>
+                </div>
+            </div>
+            <button id="process-files-btn" class="process-btn" disabled>Initialize Dashboard</button>
         </div>
 
-        <div id="dashboard-content" class="dashboard-content fade-in" style="display: none;">
+        <!-- Original Dashboard Screen -->
+        <div id="original-dashboard" class="view dashboard-content fade-in" style="display: none;">
              <div class="kpi-row">
                  <div class="glass-card join-kpi-card">
                      <div class="card-header text-green">
@@ -76,16 +96,86 @@
                     <div id="ageing-tables-container">
                         <!-- Dynamic -->
                     </div>
-                    <div id="cumulative-export-container" style="display: none;">
-                        <button onclick="exportData('cumulative')" class="btn-cumulative">
-                            <i class="ri-file-download-line"></i> Download Cumulative Pipeline
-                        </button>
-                    </div>
                 </div>
                 <div class="summary-tables" id="summary-tables-container">
                     <!-- Dynamic -->
                 </div>
              </div>
+        </div>
+
+        <!-- Position RAOG & Hireable Screen -->
+        <div id="position-dashboard" class="view dashboard-content fade-in" style="display: none;">
+            <div class="position-header">
+                <div class="position-filters glass-card">
+                    <div class="filter-group">
+                        <label>Build ID</label>
+                        <input type="text" id="pos-build-id" class="select-input" list="build-list" placeholder="Search Build ID...">
+                        <datalist id="build-list"></datalist>
+                    </div>
+                    <div class="filter-group">
+                        <label>Work Area</label>
+                        <input type="text" id="pos-work-area" class="select-input" list="work-list" placeholder="Search Work Area...">
+                        <datalist id="work-list"></datalist>
+                    </div>
+                    <div class="filter-group">
+                        <label>Job Role</label>
+                        <input type="text" id="pos-job-role" class="select-input" list="job-list" placeholder="Search Job Role...">
+                        <datalist id="job-list"></datalist>
+                    </div>
+                </div>
+
+                <div class="raog-container glass-card">
+                    <div class="raog-header">
+                        <h3>ACTUAL RAOG</h3>
+                    </div>
+                    <div class="raog-grid">
+                        <div class="raog-item r-circle">
+                            <span class="raog-label">R</span>
+                            <span id="raog-r" class="raog-value">0</span>
+                        </div>
+                        <div class="raog-item a-circle">
+                            <span class="raog-label">A</span>
+                            <span id="raog-a" class="raog-value">0</span>
+                        </div>
+                        <div class="raog-item o-circle">
+                            <span class="raog-label">O</span>
+                            <span id="raog-o" class="raog-value">0</span>
+                        </div>
+                        <div class="raog-item g-circle">
+                            <span class="raog-label">G</span>
+                            <span id="raog-g" class="raog-value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hireable-section glass-card">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h3>Hireable Positions</h3>
+                        <p class="subtitle">Positions with CAN ID and EP NO both blank.</p>
+                    </div>
+                    <button class="nav-btn" onclick="exportPositionData()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                        <i class="ri-download-cloud-2-line"></i> Export Table
+                    </button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="hireable-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Position Code</th>
+                                <th>Build ID</th>
+                                <th>Work Area</th>
+                                <th>Job Role</th>
+                                <th>Region/State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamic -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     <script src="app.js"></script>
