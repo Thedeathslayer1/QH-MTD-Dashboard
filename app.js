@@ -288,7 +288,7 @@ const posJobRole = document.getElementById('pos-job-role');
 function populatePositionFilters() {
     const buildIds = [...new Set(globalPositions.map(p => p['BUILDID']).filter(Boolean))].sort();
     const workAreas = [...new Set(globalPositions.map(p => p['WORKAREA']).filter(Boolean))].sort();
-    const jobRoles = [...new Set(globalPositions.map(p => p['JOBROLE']).filter(Boolean))].sort();
+    const jobRoles = [...new Set(globalPositions.map(p => p['ROLE']).filter(Boolean))].sort();
 
     document.getElementById('build-list').innerHTML = buildIds.map(b => `<option value="${b}">`).join('');
     document.getElementById('work-list').innerHTML = workAreas.map(w => `<option value="${w}">`).join('');
@@ -322,7 +322,7 @@ function updatePositionMetrics() {
     filteredPositions = globalPositions.filter(p => {
         return (!bId || bId === 'All' || p['BUILDID']?.toString() === bId) &&
                (!wArea || wArea === 'All' || p['WORKAREA']?.toString() === wArea) &&
-               (!jRole || jRole === 'All' || p['JOBROLE']?.toString() === jRole);
+               (!jRole || jRole === 'All' || p['ROLE']?.toString() === jRole);
     });
 
     let rCount = filteredPositions.length;
@@ -365,7 +365,7 @@ function renderHireableTable(rows) {
             <td>${r['POSITIONCODE'] || r['Position Code'] || 'N/A'}</td>
             <td>${r['BUILDID'] || 'N/A'}</td>
             <td>${r['WORKAREA'] || 'N/A'}</td>
-            <td>${r['JOBROLE'] || 'N/A'}</td>
+            <td>${r['ROLE'] || r['JOBROLE'] || 'N/A'}</td>
             <td>${r['STATE'] || r['REGION'] || 'N/A'}</td>
         </tr>
     `).join('');
