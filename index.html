@@ -134,19 +134,19 @@
                         <h3>ACTUAL RAOG</h3>
                     </div>
                     <div class="raog-grid">
-                        <div class="raog-item r-circle">
+                        <div class="raog-item r-circle" onclick="filterTable('R', null, event)">
                             <span class="raog-label">R</span>
                             <span id="raog-r" class="raog-value">0</span>
                         </div>
-                        <div class="raog-item a-circle">
+                        <div class="raog-item a-circle" onclick="filterTable('A', null, event)">
                             <span class="raog-label">A</span>
                             <span id="raog-a" class="raog-value">0</span>
                         </div>
-                        <div class="raog-item o-circle">
+                        <div class="raog-item o-circle" onclick="filterTable('O', null, event)">
                             <span class="raog-label">O</span>
                             <span id="raog-o" class="raog-value">0</span>
                         </div>
-                        <div class="raog-item g-circle">
+                        <div class="raog-item g-circle" onclick="filterTable('G', null, event)">
                             <span class="raog-label">G</span>
                             <span id="raog-g" class="raog-value">0</span>
                         </div>
@@ -154,7 +154,11 @@
                 </div>
             </div>
 
-            <div class="hireable-section glass-card">
+            <div id="role-raog-container" class="role-raog-container">
+                <!-- Dynamically populated role cards -->
+            </div>
+
+            <div class="hireable-section glass-card" id="table-section">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <div>
                         <h3>Hireable Positions</h3>

@@ -351,24 +351,36 @@ function updatePositionMetrics() {
     });
 
     let rCount = filteredPositions.length;
-    let aCount = 0; // EMP NO exists
-    let oCount = 0; // CANDIDATEID exists, but EMP NO blank
-    let gCount = 0; // Both blank
+    let aCount = 0;
+    let oCount = 0;
+    let gCount = 0;
 
-    const hireableRows = [];
+    let metricsByRole = {};
+    window.globalRaogData = { R: filteredPositions, A: [], O: [], G: [] };
 
     filteredPositions.forEach(p => {
-        // According to user screenshot keys are: CANDIDATEID (R) and EMP NO (S)
         const canId = (p['CANDIDATEID'] || p['CANID'] || p['CAN ID'] || "").toString().trim();
         const epNo = (p['EMP NO'] || p['EP NO'] || p['EPNO'] || "").toString().trim();
+        const role = p['ROLE'] || 'Unknown';
+
+        if (!metricsByRole[role]) {
+            metricsByRole[role] = { R: [], A: [], O: [], G: [] };
+        }
+        
+        metricsByRole[role].R.push(p);
 
         if (epNo !== "") {
             aCount++;
+            window.globalRaogData.A.push(p);
+            metricsByRole[role].A.push(p);
         } else if (canId !== "") {
             oCount++;
+            window.globalRaogData.O.push(p);
+            metricsByRole[role].O.push(p);
         } else {
             gCount++;
-            hireableRows.push(p);
+            window.globalRaogData.G.push(p);
+            metricsByRole[role].G.push(p);
         }
     });
 
@@ -377,11 +389,75 @@ function updatePositionMetrics() {
     document.getElementById('raog-o').innerText = oCount;
     document.getElementById('raog-g').innerText = gCount;
 
-    currentHireableRows = hireableRows;
-    renderHireableTable(hireableRows);
+    window.roleRaogData = metricsByRole;
+    renderRoleCards(metricsByRole);
+
+    document.querySelectorAll('.raog-item').forEach(el => el.classList.remove('active-filter'));
+
+    // Default view: Gaps (Hireable)
+    currentHireableRows = window.globalRaogData.G;
+    renderHireableTable(currentHireableRows, "Hireable Positions (Gap)");
 }
 
-function renderHireableTable(rows) {
+function renderRoleCards(metrics) {
+    const container = document.getElementById('role-raog-container');
+    container.innerHTML = Object.keys(metrics).map(role => {
+        const d = metrics[role];
+        return `
+            <div class="role-raog-card">
+                <h4 class="truncate" title="${role}">${role}</h4>
+                <div class="raog-grid">
+                    <div class="raog-item r-circle" onclick="filterTable('R', '${role}', event)">
+                        <span class="raog-label">R</span>
+                        <span class="raog-value">${d.R.length}</span>
+                    </div>
+                    <div class="raog-item a-circle" onclick="filterTable('A', '${role}', event)">
+                        <span class="raog-label">A</span>
+                        <span class="raog-value">${d.A.length}</span>
+                    </div>
+                    <div class="raog-item o-circle" onclick="filterTable('O', '${role}', event)">
+                        <span class="raog-label">O</span>
+                        <span class="raog-value">${d.O.length}</span>
+                    </div>
+                    <div class="raog-item g-circle" onclick="filterTable('G', '${role}', event)">
+                        <span class="raog-label">G</span>
+                        <span class="raog-value">${d.G.length}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+window.filterTable = (status, role, event) => {
+    document.querySelectorAll('.raog-item').forEach(el => el.classList.remove('active-filter'));
+    if (event) event.currentTarget.classList.add('active-filter');
+
+    let rows;
+    let titleStr = '';
+    const statusMap = {R: 'Total Required', A: 'Available (Filled)', O: 'Offered', G: 'Gap (Hireable)'};
+    
+    if (role) {
+        rows = window.roleRaogData[role][status] || [];
+        titleStr = `${role} - ${statusMap[status]} Positions`;
+    } else {
+        rows = window.globalRaogData[status] || [];
+        titleStr = `Organization - ${statusMap[status]} Positions`;
+    }
+
+    currentHireableRows = rows;
+    renderHireableTable(rows, titleStr);
+};
+
+function renderHireableTable(rows, title) {
+    const tableSection = document.getElementById('table-section');
+    if (title) {
+        const titleEl = tableSection.querySelector('h3');
+        const countSpan = tableSection.querySelector('.subtitle');
+        if (titleEl) titleEl.innerText = title;
+        if (countSpan) countSpan.innerText = `Showing ${rows.length} positions based on selection.`;
+    }
+
     const tbody = document.querySelector('#hireable-table tbody');
     tbody.innerHTML = rows.map(r => `
         <tr>

@@ -421,6 +421,21 @@ body {
   height: 90px;
   border-radius: 50%;
   border: 3px solid;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.raog-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.raog-item.active-filter {
+  background-color: var(--accent-blue) !important;
+  color: white !important;
+  border-color: white !important;
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
 }
 
 .raog-label {
@@ -437,6 +452,48 @@ body {
 .a-circle { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); }
 .o-circle { border-color: #f59e0b; color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
 .g-circle { border-color: #ef4444; color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
+/* Role RAOG Sub-cards */
+.role-raog-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.role-raog-card {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  padding: 1.2rem;
+  backdrop-filter: blur(10px);
+}
+
+.role-raog-card h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: var(--text-light);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.role-raog-card .raog-grid {
+  padding: 0.5rem 0;
+}
+
+.role-raog-card .raog-item {
+  width: 60px;
+  height: 60px;
+  border-width: 2px;
+}
+
+.role-raog-card .raog-label {
+  font-size: 1rem;
+}
+
+.role-raog-card .raog-value {
+  font-size: 0.9rem;
+}
 
 .data-table {
   width: 100%;
