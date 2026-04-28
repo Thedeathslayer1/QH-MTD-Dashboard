@@ -119,12 +119,14 @@ resetBtn.addEventListener('click', () => {
     filtersContainer.style.display = 'none';
     views.forEach(v => v.style.display = 'none');
     
-    uploadSection.style.display = 'block';
+    uploadSection.style.display = 'flex'; // Use flex to maintain centering
     const landingFeatures = document.getElementById('landing-features');
     if (landingFeatures) landingFeatures.style.display = 'block';
 
-    // Show all nav buttons again for next time
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.style.display = 'flex');
+    // Show all dashboard nav buttons again, but keep reset-btn hidden
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.id !== 'reset-btn') btn.style.display = 'flex';
+    });
 });
 
 // View Switching
