@@ -93,10 +93,43 @@ processBtn.addEventListener('click', () => {
     if (landingFeatures) landingFeatures.style.display = 'none';
 });
 
+// Reset Functionality
+const resetBtn = document.getElementById('reset-btn');
+resetBtn.addEventListener('click', () => {
+    // 1. Reset Global State
+    globalData = [];
+    globalPositions = [];
+    filteredPositions = [];
+    currentHireableRows = [];
+    currentFilteredData = [];
+
+    // 2. Clear UI Elements
+    csvInput.value = '';
+    xlsxInput.value = '';
+    csvStatus.innerHTML = 'Upload Candidate CSV';
+    xlsxStatus.innerHTML = 'Upload Position Excel';
+    csvStatus.style.color = '';
+    xlsxStatus.style.color = '';
+    processBtn.disabled = true;
+
+    // 3. Toggle Visibility
+    topNav.style.display = 'none';
+    filtersContainer.style.display = 'none';
+    views.forEach(v => v.style.display = 'none');
+    
+    uploadSection.style.display = 'block';
+    const landingFeatures = document.getElementById('landing-features');
+    if (landingFeatures) landingFeatures.style.display = 'block';
+
+    // Show all nav buttons again for next time
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.style.display = 'flex');
+});
+
 // View Switching
 navBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const targetView = btn.getAttribute('data-view');
+        if (!targetView) return; // Prevent reset-btn from triggering view logic
         
         navBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
