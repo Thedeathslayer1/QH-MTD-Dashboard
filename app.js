@@ -8,6 +8,7 @@ const topNav = document.getElementById('top-nav');
 const dashboardContent = document.getElementById('original-dashboard');
 const filtersContainer = document.getElementById('filters-container');
 const uploadSection = document.getElementById('upload-section');
+const cumulativeExportContainer = document.getElementById('cumulative-export-container');
 
 // Navigation
 const navBtns = document.querySelectorAll('.nav-btn');
@@ -18,6 +19,7 @@ let globalData = []; // CSV Candidates
 let globalPositions = []; // Excel Positions
 let filteredPositions = []; // Filtered Excel Positions for RAOG
 let currentHireableRows = []; // Filtered rows for the table
+let currentFilteredData = []; // Store current filtered data for global export usage
 const CURRENT_DATE = new Date();
 CURRENT_DATE.setHours(0,0,0,0);
 
@@ -31,6 +33,7 @@ csvInput.addEventListener('change', (e) => {
             skipEmptyLines: true,
             complete: (results) => {
                 globalData = results.data;
+                currentFilteredData = globalData;
                 csvStatus.innerHTML = `Loaded ${globalData.length} records <i class="ri-checkbox-circle-line"></i>`;
                 csvStatus.style.color = "#10b981";
                 checkReady();
@@ -69,6 +72,7 @@ processBtn.addEventListener('click', () => {
     topNav.style.display = 'flex';
     dashboardContent.style.display = 'block';
     filtersContainer.style.display = 'flex';
+    if(cumulativeExportContainer) cumulativeExportContainer.style.display = 'block';
 });
 
 // View Switching
@@ -122,6 +126,7 @@ function updateOriginalFilters() {
     let filtered = globalData;
     if (agencyFilter.value !== 'All') filtered = filtered.filter(row => row['agency'] === agencyFilter.value);
     if (stateFilter.value !== 'All') filtered = filtered.filter(row => row['requisition State'] === stateFilter.value);
+    currentFilteredData = filtered;
     renderOriginalDashboard(filtered);
 }
 
@@ -421,6 +426,42 @@ window.exportOriginalData = (type) => {
                 else ageing = '> 7 Days';
             }
             return { ...row, Days: diff >= 0 ? diff : '', Ageing: ageing };
+        });
+    }
+
+    else if (type === 'cumulative') {
+        const statuses = ['Hiring Advice Generated', 'Ready to offer', 'Ready to Offer', 'Ready to Join'];
+        const rawRows = currentFilteredData.filter(r => statuses.includes(r.current_status));
+        
+        rows = rawRows.map(row => {
+            const newRow = { ...row };
+            const st = row['current_status'];
+            const cardType = st === 'Hiring Advice Generated' ? 'ha' : 
+                             (st === 'Ready to offer' || st === 'Ready to Offer') ? 'rto' : 'rtj';
+                             
+            let targetDateStr = row['has Approved Date'];
+            let isMMDDYYYY = false;
+            
+            if (targetDateStr) {
+                isMMDDYYYY = true;
+            } else {
+                targetDateStr = row['last_activity_on'];
+                isMMDDYYYY = false;
+            }
+            
+            const dateObj = parseDate(targetDateStr, isMMDDYYYY);
+            const diffDays = getDaysDifference(dateObj);
+            
+            let ageing = 'Unknown';
+            if (diffDays >= 0) {
+                if (diffDays <= 3) ageing = '< 3 Days';
+                else if (diffDays <= 7) ageing = cardType === 'ha' ? '3 - 7 Days' : '4 - 7 Days';
+                else ageing = '> 7 Days';
+            }
+            
+            newRow['Days'] = diffDays >= 0 ? diffDays : '';
+            newRow['Ageing'] = diffDays >= 0 ? ageing : '';
+            return newRow;
         });
     }
 
