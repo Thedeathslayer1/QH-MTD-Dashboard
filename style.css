@@ -53,10 +53,29 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #60a5fa, #a78bfa);
+  background: linear-gradient(135deg, #60a5fa, #a855f7, #ec4899);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.main-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.03em;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.dashboard-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  font-weight: 400;
 }
 
 .text-muted { color: var(--text-muted); }
@@ -108,39 +127,75 @@ body {
   border-color: var(--accent-blue);
 }
 
-/* Upload Container */
+/* Upload Section Redesign */
 .upload-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 16rem;
-  border: 2px dashed #475569;
-  border-radius: 1rem;
-  background-color: rgba(30, 41, 59, 0.3);
+  padding: 3.5rem 2rem;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2.5rem;
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+  margin-bottom: 3rem;
+}
+
+.upload-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.upload-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1.75rem;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.upload-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(96, 165, 250, 0.4);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
 }
 
 .upload-label {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
-  padding: 2.5rem;
-  transition: color 0.2s;
-}
-
-.upload-label:hover {
-  color: #60a5fa;
+  padding: 3.5rem 2rem;
 }
 
 .upload-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  color: #64748b;
+  font-size: 3.8rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #94a3b8, #475569);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.4s ease;
+}
+
+.upload-card:hover .upload-icon {
+  background: linear-gradient(135deg, #60a5fa, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: scale(1.15) rotate(-2deg);
 }
 
 .upload-text {
-  font-size: 1.125rem;
-  font-weight: 500;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: 0.025em;
 }
 
 .hidden-input {
@@ -379,22 +434,35 @@ body {
 }
 
 .process-btn {
-  margin-top: 2rem;
-  padding: 1rem 3rem;
-  border-radius: 12px;
+  margin-top: 3rem;
+  padding: 1.1rem 4rem;
+  border-radius: 1rem;
   border: none;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
+}
+
+.process-btn:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+}
+
+.process-btn:active:not(:disabled) {
+  transform: translateY(0) scale(1);
 }
 
 .process-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
-  filter: grayscale(1);
+  filter: grayscale(0.8);
+  box-shadow: none;
 }
 
 /* RAOG Section */
