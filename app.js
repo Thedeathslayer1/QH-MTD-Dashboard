@@ -70,6 +70,7 @@ processBtn.addEventListener('click', () => {
     initializeDashboard();
     uploadSection.style.display = 'none';
     topNav.style.display = 'flex';
+    document.getElementById('reset-btn').style.display = 'flex';
     
     // Logic for partial uploads
     const opBtn = document.querySelector('[data-view="original-dashboard"]');
@@ -114,6 +115,7 @@ resetBtn.addEventListener('click', () => {
 
     // 3. Toggle Visibility
     topNav.style.display = 'none';
+    document.getElementById('reset-btn').style.display = 'none';
     filtersContainer.style.display = 'none';
     views.forEach(v => v.style.display = 'none');
     

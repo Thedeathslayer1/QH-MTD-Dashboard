@@ -12,21 +12,27 @@
 <body>
     <div class="app-container">
         <header class="dashboard-header">
-            <div>
+            <div class="header-left">
+                <button id="reset-btn" class="nav-btn reset-btn" style="display: none;">
+                    <i class="ri-arrow-go-back-line"></i> New Upload
+                </button>
+            </div>
+
+            <div class="header-center">
                 <h1 class="main-title text-gradient">QuickHire + Betterplace Dashboard</h1>
                 <p class="subtitle">Unified recruitment tracking and position management.</p>
             </div>
             
-            <nav id="top-nav" class="top-nav" style="display: none;">
-                <button id="reset-btn" class="nav-btn reset-btn"><i class="ri-arrow-go-back-line"></i> New Upload</button>
-                <div class="nav-divider"></div>
-                <button class="nav-btn active" data-view="original-dashboard">Operations Dashboard</button>
-                <button class="nav-btn" data-view="position-dashboard">Position RAOG & Hireable</button>
-            </nav>
+            <div class="header-right">
+                <nav id="top-nav" class="top-nav" style="display: none;">
+                    <button class="nav-btn active" data-view="original-dashboard">Operations Dashboard</button>
+                    <button class="nav-btn" data-view="position-dashboard">Position RAOG & Hireable</button>
+                </nav>
 
-            <div class="filters" id="filters-container" style="display: none;">
-                <select id="agency-filter" class="select-input"><option value="All">All Agencies</option></select>
-                <select id="state-filter" class="select-input"><option value="All">All States</option></select>
+                <div class="filters" id="filters-container" style="display: none;">
+                    <select id="agency-filter" class="select-input"><option value="All">All Agencies</option></select>
+                    <select id="state-filter" class="select-input"><option value="All">All States</option></select>
+                </div>
             </div>
         </header>
 
