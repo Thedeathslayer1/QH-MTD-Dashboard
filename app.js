@@ -61,7 +61,7 @@ xlsxInput.addEventListener('change', (e) => {
 });
 
 function checkReady() {
-    if (globalData.length > 0 && globalPositions.length > 0) {
+    if (globalData.length > 0 || globalPositions.length > 0) {
         processBtn.disabled = false;
     }
 }
@@ -70,9 +70,24 @@ processBtn.addEventListener('click', () => {
     initializeDashboard();
     uploadSection.style.display = 'none';
     topNav.style.display = 'flex';
-    dashboardContent.style.display = 'block';
-    filtersContainer.style.display = 'flex';
-    if(cumulativeExportContainer) cumulativeExportContainer.style.display = 'block';
+    
+    // Logic for partial uploads
+    const opBtn = document.querySelector('[data-view="original-dashboard"]');
+    const posBtn = document.querySelector('[data-view="position-dashboard"]');
+    
+    if (globalData.length === 0) {
+        opBtn.style.display = 'none';
+        posBtn.click(); // Switch to position dashboard if only excel uploaded
+    } else if (globalPositions.length === 0) {
+        posBtn.style.display = 'none';
+        opBtn.click(); // Switch to original dashboard if only csv uploaded
+    } else {
+        opBtn.click(); // Default to original if both present
+    }
+    
+    if(cumulativeExportContainer) {
+        cumulativeExportContainer.style.display = globalData.length > 0 ? 'block' : 'none';
+    }
 });
 
 // View Switching
@@ -96,14 +111,17 @@ navBtns.forEach(btn => {
 });
 
 function initializeDashboard() {
-    // 1. Setup Original Dashboard
-    initializeFilters();
-    renderOriginalDashboard(globalData);
+    // 1. Setup Original Dashboard if CSV present
+    if (globalData.length > 0) {
+        initializeFilters();
+        renderOriginalDashboard(globalData);
+    }
 
-    // 2. Setup Position Dashboard
-    populatePositionFilters();
-    // Default: Reset Position Dashboard view (avoiding initial lag)
-    updatePositionMetrics();
+    // 2. Setup Position Dashboard if Excel present
+    if (globalPositions.length > 0) {
+        populatePositionFilters();
+        updatePositionMetrics();
+    }
 }
 
 // --- ORIGINAL DASHBOARD LOGIC ---
