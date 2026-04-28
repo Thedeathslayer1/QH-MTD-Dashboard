@@ -88,6 +88,9 @@ processBtn.addEventListener('click', () => {
     if(cumulativeExportContainer) {
         cumulativeExportContainer.style.display = globalData.length > 0 ? 'block' : 'none';
     }
+
+    const landingFeatures = document.getElementById('landing-features');
+    if (landingFeatures) landingFeatures.style.display = 'none';
 });
 
 // View Switching
